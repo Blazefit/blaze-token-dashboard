@@ -3,13 +3,17 @@
   "summary": {
     "totalSessions": 317,
     "todayTokens": 42253031,
+    "todayCost": 21.13,
     "weekToDate": 106658224,
+    "weekToDateCost": 53.33,
     "monthToDate": 128820649,
+    "monthToDateCost": 64.41,
     "yearToDate": 128820649,
+    "yearToDateCost": 64.41,
     "averageDaily": 21272464,
-    "totalCost": 52.04,
-    "projectedMonthlyCost": 3190869.72,
-    "projectedYearlyCost": 38822248.26
+    "averageDailyCost": 10.64,
+    "projectedMonthlyCost": 319.20,
+    "projectedYearlyCost": 3882.40
   },
   "dailyBreakdown": {
     "2026-03-04": 42253031,
@@ -25,27 +29,37 @@
     {
       "name": "moonshotai/kimi-k2.5",
       "tokens": 80074275,
-      "sessions": 0
+      "sessions": 0,
+      "costPer1K": 0.0005,
+      "estimatedCost": 40.04
     },
     {
       "name": "glm-4.7",
       "tokens": 20194038,
-      "sessions": 0
+      "sessions": 0,
+      "costPer1K": 0.0001,
+      "estimatedCost": 2.02
     },
     {
       "name": "anthropic/claude-sonnet-4.5",
       "tokens": 17027890,
-      "sessions": 0
+      "sessions": 0,
+      "costPer1K": 0.0009,
+      "estimatedCost": 15.33
     },
     {
       "name": "moonshotai/kimi-k2-thinking",
       "tokens": 6871233,
-      "sessions": 0
+      "sessions": 0,
+      "costPer1K": 0.002,
+      "estimatedCost": 13.74
     },
     {
       "name": "unknown",
       "tokens": 4653213,
-      "sessions": 0
+      "sessions": 0,
+      "costPer1K": 0.0005,
+      "estimatedCost": 2.33
     }
   ],
   "todayUsage": 42253031,
