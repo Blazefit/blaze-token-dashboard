@@ -642,27 +642,57 @@
             plan.innerHTML = planHtml;
         }
         
-        // Initialize with placeholder
-        populateDashboard({
-            files: [],
-            largeFiles: [],
-            duplicates: [],
-            oldFiles: [],
-            todayUsage: 0,
-            wtdUsage: 0,
-            mtdUsage: 0,
-            ytdUsage: 0,
-            avgUsage: 0,
-            contextTokens: 0,
-            summary: {
-                totalSessions: 0,
-                todayCost: 0,
-                weekToDateCost: 0,
-                monthToDateCost: 0,
-                projectedYearlyCost: 0,
-                averageDailyCost: 0
+        // Load and display data
+        async function initDashboard() {
+            try {
+                const response = await fetch('openclaw-usage-data.json');
+                const data = await response.json();
+                populateDashboard(data);
+            } catch (e) {
+                console.log('Loading from JSON file...');
+                // Embedded fallback data
+                populateDashboard({
+                    "scanDate": "2026-03-04T18:12:05.053372",
+                    "summary": {
+                        "totalSessions": 317,
+                        "todayTokens": 42253031,
+                        "todayCost": 21.13,
+                        "weekToDate": 106658224,
+                        "weekToDateCost": 53.33,
+                        "monthToDate": 128820649,
+                        "monthToDateCost": 64.41,
+                        "yearToDate": 128820649,
+                        "yearToDateCost": 64.41,
+                        "averageDaily": 21272464,
+                        "averageDailyCost": 10.64,
+                        "projectedMonthlyCost": 319.20,
+                        "projectedYearlyCost": 3882.40
+                    },
+                    "dailyBreakdown": {
+                        "2026-03-04": 42253031,
+                        "2026-03-03": 28458038,
+                        "2026-03-02": 15805776,
+                        "2026-03-01": 19712716
+                    },
+                    "modelBreakdown": [
+                        {"name": "moonshotai/kimi-k2.5", "tokens": 80074275, "costPer1K": 0.0005, "estimatedCost": 40.04},
+                        {"name": "anthropic/claude-sonnet-4.5", "tokens": 17027890, "costPer1K": 0.0009, "estimatedCost": 15.33},
+                        {"name": "glm-4.7", "tokens": 20194038, "costPer1K": 0.0001, "estimatedCost": 2.02},
+                        {"name": "moonshotai/kimi-k2-thinking", "tokens": 6871233, "costPer1K": 0.002, "estimatedCost": 13.74}
+                    ],
+                    "todayUsage": 42253031,
+                    "wtdUsage": 106658224,
+                    "mtdUsage": 128820649,
+                    "ytdUsage": 128820649,
+                    "avgUsage": 21272464,
+                    "mtdCost": 64.41,
+                    "ytdCost": 64.41
+                });
             }
-        });
+        }
+        
+        // Start loading
+        initDashboard();
     </script>
 
     <script>
