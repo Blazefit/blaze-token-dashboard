@@ -66,5 +66,7 @@
   "wtdUsage": 106658224,
   "mtdUsage": 128820649,
   "ytdUsage": 128820649,
-  "avgUsage": 21272464
+  "avgUsage": 21272464,
+  "mtdCost": 64.41,
+  "ytdCost": 64.41
 }

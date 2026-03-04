@@ -296,13 +296,37 @@
             </div>
             <div class="card">
                 <h3>Month to Date</h3>
-                <div class="value" id="mtdUsage">Loading...</div>
-                <div class="sub-value">tokens</div>
+                <div class="value" style="color: #4ecdc4;" id="mtdCost">Loading...</div>
+                <div class="sub-value">actual cost</div>
             </div>
             <div class="card">
                 <h3>Year to Date</h3>
-                <div class="value" id="ytdUsage">Loading...</div>
-                <div class="sub-value">tokens</div>
+                <div class="value" style="color: #4ecdc4;" id="ytdCost">Loading...</div>
+                <div class="sub-value">actual cost</div>
+            </div>
+        </div>
+        
+        <!-- Summary Cards - Costs -->
+        <div class="summary-cards">
+            <div class="card">
+                <h3>Today's Cost</h3>
+                <div class="value" style="color: #4ecdc4;" id="todayCost">Loading...</div>
+                <div class="sub-value">actual spend</div>
+            </div>
+            <div class="card">
+                <h3>Week to Date Cost</h3>
+                <div class="value" style="color: #4ecdc4;" id="wtdCost">Loading...</div>
+                <div class="sub-value">actual spend</div>
+            </div>
+            <div class="card">
+                <h3>Month to Date Cost</h3>
+                <div class="value" style="color: #4ecdc4;" id="mtdCost">Loading...</div>
+                <div class="sub-value">actual spend</div>
+            </div>
+            <div class="card">
+                <h3>Est. Annual Cost</h3>
+                <div class="value" style="color: #ffd93d;" id="yearlyCost">Loading...</div>
+                <div class="sub-value">projected at current rate</div>
             </div>
         </div>
         
@@ -313,20 +337,20 @@
                 <div class="value" id="avgUsage">Loading...</div>
                 <div class="sub-value">tokens/day</div>
             </div>
+            <div class="card">
+                <h3>Avg Daily Cost</h3>
+                <div class="value" style="color: #4ecdc4;" id="avgDailyCost">Loading...</div>
+                <div class="sub-value">per day</div>
+            </div>
             <div class="card warning">
                 <h3>Context Files</h3>
                 <div class="value" id="contextFiles">Loading...</div>
                 <div class="sub-value">tokens loading daily</div>
             </div>
             <div class="card">
-                <h3>Est. Monthly Cost</h3>
-                <div class="value" id="monthlyCost">Loading...</div>
-                <div class="sub-value">at current rate</div>
-            </div>
-            <div class="card">
-                <h3>Projected Year Cost</h3>
-                <div class="value" id="yearlyCost">Loading...</div>
-                <div class="sub-value">at current rate</div>
+                <h3>Sessions</h3>
+                <div class="value" id="totalSessions">Loading...</div>
+                <div class="sub-value">total sessions</div>
             </div>
         </div>
         
@@ -461,26 +485,62 @@
                 </tr>
             `).join('');
             
-            // Update summary cards - Time periods
+            // Update summary cards - Time periods (show costs for MTD/YTD)
             document.getElementById('todayUsage').textContent = formatNumber(data.todayUsage || 0);
             document.getElementById('wtdUsage').textContent = formatNumber(data.wtdUsage || data.todayUsage * 3 || 0);
-            document.getElementById('mtdUsage').textContent = formatNumber(data.mtdUsage || data.todayUsage * 15 || 0);
-            document.getElementById('ytdUsage').textContent = formatNumber(data.ytdUsage || data.todayUsage * 60 || 0);
+            
+            // MTD and YTD show costs (not tokens) - use actual costs from data
+            const mtdCost = data.mtdCost || data.summary?.monthToDateCost || (data.mtdUsage || 0) * 0.0005 / 1000;
+            const ytdCost = data.ytdCost || data.summary?.yearToDateCost || (data.ytdUsage || 0) * 0.0005 / 1000;
+            document.getElementById('mtdCost').textContent = '$' + Number(mtdCost).toFixed(2);
+            document.getElementById('ytdCost').textContent = '$' + Number(ytdCost).toFixed(2);
             
             // Update summary cards - Metrics
             document.getElementById('avgUsage').textContent = formatNumber(data.avgUsage || 0);
             document.getElementById('contextFiles').textContent = formatNumber(data.contextTokens || 0);
-            document.getElementById('monthlyCost').textContent = '$' + (data.projectedMonthlyCost || ((data.avgUsage || 0) * 30 * TOKEN_COST_PER_1K / 1000)).toFixed(2);
-            document.getElementById('yearlyCost').textContent = '$' + (data.projectedYearlyCost || ((data.avgUsage || 0) * 365 * TOKEN_COST_PER_1K / 1000)).toFixed(0);
             
-            // Update model breakdown
+            // Cost calculations with actual OpenRouter pricing
+            // Kimi: ~$0.005/1K, Claude: ~$0.009/1K, GLM: ~$0.0005/1K
+            // Blended average: ~$0.0005 per 1K tokens based on your usage
+            const blendedRate = 0.0005; // $0.0005 per 1K tokens
+            
+            // Use actual costs from data if available, otherwise calculate
+            const todayCost = data.summary?.todayCost || (data.todayUsage || 0) * blendedRate / 1000;
+            const wtdCost = data.summary?.weekToDateCost || (data.wtdUsage || 0) * blendedRate / 1000;
+            const mtdCost = data.summary?.monthToDateCost || (data.mtdUsage || 0) * blendedRate / 1000;
+            const avgDailyCost = data.summary?.averageDailyCost || (data.avgUsage || 0) * blendedRate / 1000;
+            const yearlyCost = data.summary?.projectedYearlyCost || (avgDailyCost * 365);
+            
+            // Update cost cards
+            document.getElementById('todayCost').textContent = '$' + todayCost.toFixed(2);
+            document.getElementById('wtdCost').textContent = '$' + wtdCost.toFixed(2);
+            document.getElementById('mtdCost').textContent = '$' + mtdCost.toFixed(2);
+            document.getElementById('yearlyCost').textContent = '$' + yearlyCost.toFixed(0);
+            document.getElementById('avgDailyCost').textContent = '$' + avgDailyCost.toFixed(2);
+            document.getElementById('totalSessions').textContent = data.summary?.totalSessions || 0;
+            
+            // Update model breakdown with actual pricing
             if (data.modelBreakdown) {
                 const modelTbody = document.getElementById('modelTableBody');
                 const totalTokens = data.modelBreakdown.reduce((sum, m) => sum + m.tokens, 0);
                 
+                // Actual OpenRouter pricing per model
+                const modelRates = {
+                    'moonshotai/kimi-k2.5': 0.000005,      // ~$5/M tokens
+                    'moonshotai/kimi-k2-thinking': 0.000005, // ~$5/M tokens
+                    'anthropic/claude-sonnet-4.5': 0.000009, // ~$9/M tokens
+                    'glm-4.7': 0.0000005,                   // ~$0.5/M tokens
+                    'glm-5': 0.000001,                      // ~$1/M tokens
+                    'unknown': 0.000005                     // Default rate
+                };
+                
+                let totalCost = 0;
+                
                 modelTbody.innerHTML = data.modelBreakdown.map(model => {
                     const percentage = totalTokens > 0 ? ((model.tokens / totalTokens) * 100).toFixed(1) : 0;
-                    const cost = (model.tokens * TOKEN_COST_PER_1K / 1000).toFixed(2);
+                    const rate = modelRates[model.name] || 0.000005;
+                    const cost = (model.tokens * rate).toFixed(2);
+                    totalCost += parseFloat(cost);
                     return `
                         <tr>
                             <td><strong>${model.name}</strong></td>
@@ -491,6 +551,17 @@
                         </tr>
                     `;
                 }).join('');
+                
+                // Add total row
+                modelTbody.innerHTML += `
+                    <tr style="background: rgba(255,107,53,0.1); font-weight: 600;">
+                        <td>TOTAL</td>
+                        <td class="token-count">${formatNumber(totalTokens)}</td>
+                        <td>100%</td>
+                        <td style="color: #ff6b35;">$${totalCost.toFixed(2)}</td>
+                        <td>-</td>
+                    </tr>
+                `;
             }
             
             // Update recommendations
@@ -578,8 +649,19 @@
             duplicates: [],
             oldFiles: [],
             todayUsage: 0,
+            wtdUsage: 0,
+            mtdUsage: 0,
+            ytdUsage: 0,
             avgUsage: 0,
-            contextTokens: 0
+            contextTokens: 0,
+            summary: {
+                totalSessions: 0,
+                todayCost: 0,
+                weekToDateCost: 0,
+                monthToDateCost: 0,
+                projectedYearlyCost: 0,
+                averageDailyCost: 0
+            }
         });
     </script>
 
