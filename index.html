@@ -105,12 +105,29 @@
         .table-container {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 15px;
-            overflow: hidden;
+            overflow-x: auto;
+            overflow-y: hidden;
             border: 1px solid rgba(255, 255, 255, 0.1);
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .table-container::-webkit-scrollbar {
+            height: 8px;
+        }
+        
+        .table-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+        
+        .table-container::-webkit-scrollbar-thumb {
+            background: #ff6b35;
+            border-radius: 4px;
         }
         
         table {
             width: 100%;
+            min-width: 600px;
             border-collapse: collapse;
         }
         
