@@ -306,6 +306,30 @@
             </div>
         </div>
         
+        <!-- Summary Cards - Costs -->
+        <div class="summary-cards">
+            <div class="card">
+                <h3>Today's Cost</h3>
+                <div class="value" style="color: #4ecdc4;" id="todayCost">Loading...</div>
+                <div class="sub-value">actual spend</div>
+            </div>
+            <div class="card">
+                <h3>Week to Date Cost</h3>
+                <div class="value" style="color: #4ecdc4;" id="wtdCost">Loading...</div>
+                <div class="sub-value">actual spend</div>
+            </div>
+            <div class="card">
+                <h3>Est. Monthly Cost</h3>
+                <div class="value" style="color: #ffd93d;" id="monthlyCost">Loading...</div>
+                <div class="sub-value">projected at current rate</div>
+            </div>
+            <div class="card">
+                <h3>Est. Annual Cost</h3>
+                <div class="value" style="color: #ffd93d;" id="yearlyCost">Loading...</div>
+                <div class="sub-value">projected at current rate</div>
+            </div>
+        </div>
+
         <!-- Summary Cards - Metrics -->
         <div class="summary-cards">
             <div class="card">
@@ -449,10 +473,17 @@
             return '<span class="size-badge size-large">Large</span>';
         }
         
+        // Safe element setter
+        function setEl(id, text) {
+            var el = document.getElementById(id);
+            if (el) el.textContent = text;
+        }
+
         // Populate table (called by audit script)
         function populateDashboard(data) {
+            try {
             const tbody = document.getElementById('fileTableBody');
-            tbody.innerHTML = data.files.map(file => `
+            tbody.innerHTML = (data.files || []).map(file => `
                 <tr>
                     <td class="file-path">${file.path}</td>
                     <td>${formatNumber(file.size)} bytes</td>
@@ -461,35 +492,30 @@
                 </tr>
             `).join('');
             
-            // Update summary cards - Time periods (show costs for MTD/YTD)
-            document.getElementById('todayUsage').textContent = formatNumber(data.todayUsage || 0);
-            document.getElementById('wtdUsage').textContent = formatNumber(data.wtdUsage || data.todayUsage * 3 || 0);
+            // Update summary cards - tokens
+            setEl('todayUsage', formatNumber(data.todayUsage || 0));
+            setEl('wtdUsage', formatNumber(data.wtdUsage || 0));
+            setEl('avgUsage', formatNumber(data.avgUsage || 0));
+            setEl('contextFiles', formatNumber(data.contextTokens || 0));
+            setEl('totalSessions', data.summary?.totalSessions || 0);
             
-            // MTD and YTD show costs (not tokens) - use actual costs from data
-            
-            // Update summary cards - Metrics
-            document.getElementById('avgUsage').textContent = formatNumber(data.avgUsage || 0);
-            document.getElementById('contextFiles').textContent = formatNumber(data.contextTokens || 0);
-            
-            // Cost calculations with actual OpenRouter pricing
-            // Kimi: ~$0.005/1K, Claude: ~$0.009/1K, GLM: ~$0.0005/1K
-            // Blended average: ~$0.0005 per 1K tokens based on your usage
-            const blendedRate = 0.0005; // $0.0005 per 1K tokens
-            
-            // Use actual costs from data if available, otherwise calculate
-            const todayCost = data.summary?.todayCost || (data.todayUsage || 0) * blendedRate / 1000;
-            const wtdCost = data.summary?.weekToDateCost || (data.wtdUsage || 0) * blendedRate / 1000;
-            const mtdCost = data.summary?.monthToDateCost || (data.mtdUsage || 0) * blendedRate / 1000;
-            const avgDailyCost = data.summary?.averageDailyCost || (data.avgUsage || 0) * blendedRate / 1000;
-            const yearlyCost = data.summary?.projectedYearlyCost || (avgDailyCost * 365);
+            // Cost calculations
+            var blendedRate = 0.0005;
+            var todayCost = data.summary?.todayCost || (data.todayUsage || 0) * blendedRate / 1000;
+            var wtdCost = data.summary?.weekToDateCost || (data.wtdUsage || 0) * blendedRate / 1000;
+            var mtdCost = data.summary?.monthToDateCost || (data.mtdUsage || 0) * blendedRate / 1000;
+            var avgDailyCost = data.summary?.averageDailyCost || (data.avgUsage || 0) * blendedRate / 1000;
+            var monthlyCost = data.summary?.projectedMonthlyCost || (avgDailyCost * 30);
+            var yearlyCost = data.summary?.projectedYearlyCost || (avgDailyCost * 365);
             
             // Update cost cards
-            document.getElementById('todayCost').textContent = '$' + todayCost.toFixed(2);
-            document.getElementById('wtdCost').textContent = '$' + wtdCost.toFixed(2);
-            document.getElementById('mtdCost').textContent = '$' + mtdCost.toFixed(2);
-            document.getElementById('yearlyCost').textContent = '$' + yearlyCost.toFixed(0);
-            document.getElementById('avgDailyCost').textContent = '$' + avgDailyCost.toFixed(2);
-            document.getElementById('totalSessions').textContent = data.summary?.totalSessions || 0;
+            setEl('todayCost', '$' + todayCost.toFixed(2));
+            setEl('wtdCost', '$' + wtdCost.toFixed(2));
+            setEl('mtdCost', '$' + mtdCost.toFixed(2));
+            setEl('ytdCost', '$' + (data.ytdCost || mtdCost).toFixed(2));
+            setEl('monthlyCost', '$' + monthlyCost.toFixed(0));
+            setEl('yearlyCost', '$' + yearlyCost.toFixed(0));
+            setEl('avgDailyCost', '$' + avgDailyCost.toFixed(2));
             
             // Update model breakdown with actual pricing
             if (data.modelBreakdown) {
@@ -538,6 +564,7 @@
             
             // Update recommendations
             updateRecommendations(data);
+            } catch(err) { console.error('Dashboard error:', err); }
         }
         
         function updateRecommendations(data) {
