@@ -306,30 +306,6 @@
             </div>
         </div>
         
-        <!-- Summary Cards - Costs -->
-        <div class="summary-cards">
-            <div class="card">
-                <h3>Today's Cost</h3>
-                <div class="value" style="color: #4ecdc4;" id="todayCost">Loading...</div>
-                <div class="sub-value">actual spend</div>
-            </div>
-            <div class="card">
-                <h3>Week to Date Cost</h3>
-                <div class="value" style="color: #4ecdc4;" id="wtdCost">Loading...</div>
-                <div class="sub-value">actual spend</div>
-            </div>
-            <div class="card">
-                <h3>Month to Date Cost</h3>
-                <div class="value" style="color: #4ecdc4;" id="mtdCost">Loading...</div>
-                <div class="sub-value">actual spend</div>
-            </div>
-            <div class="card">
-                <h3>Est. Annual Cost</h3>
-                <div class="value" style="color: #ffd93d;" id="yearlyCost">Loading...</div>
-                <div class="sub-value">projected at current rate</div>
-            </div>
-        </div>
-        
         <!-- Summary Cards - Metrics -->
         <div class="summary-cards">
             <div class="card">
@@ -490,10 +466,6 @@
             document.getElementById('wtdUsage').textContent = formatNumber(data.wtdUsage || data.todayUsage * 3 || 0);
             
             // MTD and YTD show costs (not tokens) - use actual costs from data
-            const mtdCost = data.mtdCost || data.summary?.monthToDateCost || (data.mtdUsage || 0) * 0.0005 / 1000;
-            const ytdCost = data.ytdCost || data.summary?.yearToDateCost || (data.ytdUsage || 0) * 0.0005 / 1000;
-            document.getElementById('mtdCost').textContent = '$' + Number(mtdCost).toFixed(2);
-            document.getElementById('ytdCost').textContent = '$' + Number(ytdCost).toFixed(2);
             
             // Update summary cards - Metrics
             document.getElementById('avgUsage').textContent = formatNumber(data.avgUsage || 0);
@@ -643,102 +615,40 @@
         }
         
         // Load and display data
-        async function initDashboard() {
-            try {
-                const response = await fetch('openclaw-usage-data.json');
-                const data = await response.json();
-                populateDashboard(data);
-            } catch (e) {
-                console.log('Loading from JSON file...');
-                // Embedded fallback data
-                populateDashboard({
-                    "scanDate": "2026-03-04T18:12:05.053372",
-                    "summary": {
-                        "totalSessions": 317,
-                        "todayTokens": 42253031,
-                        "todayCost": 21.13,
-                        "weekToDate": 106658224,
-                        "weekToDateCost": 53.33,
-                        "monthToDate": 128820649,
-                        "monthToDateCost": 64.41,
-                        "yearToDate": 128820649,
-                        "yearToDateCost": 64.41,
-                        "averageDaily": 21272464,
-                        "averageDailyCost": 10.64,
-                        "projectedMonthlyCost": 319.20,
-                        "projectedYearlyCost": 3882.40
-                    },
-                    "dailyBreakdown": {
-                        "2026-03-04": 42253031,
-                        "2026-03-03": 28458038,
-                        "2026-03-02": 15805776,
-                        "2026-03-01": 19712716
-                    },
-                    "modelBreakdown": [
-                        {"name": "moonshotai/kimi-k2.5", "tokens": 80074275, "costPer1K": 0.0005, "estimatedCost": 40.04},
-                        {"name": "anthropic/claude-sonnet-4.5", "tokens": 17027890, "costPer1K": 0.0009, "estimatedCost": 15.33},
-                        {"name": "glm-4.7", "tokens": 20194038, "costPer1K": 0.0001, "estimatedCost": 2.02},
-                        {"name": "moonshotai/kimi-k2-thinking", "tokens": 6871233, "costPer1K": 0.002, "estimatedCost": 13.74}
-                    ],
-                    "todayUsage": 42253031,
-                    "wtdUsage": 106658224,
-                    "mtdUsage": 128820649,
-
-        // Load and display data
-        async function initDashboard() {
-            try {
-                const response = await fetch('openclaw-usage-data.json?t=' + Date.now());
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log('Loaded data from JSON:', data);
-                    populateDashboard(data);
-                } else {
-                    throw new Error('JSON file not found');
-                }
-            } catch (e) {
-                console.log('Using embedded fallback data');
-                // Embedded fallback data
-                populateDashboard({
-                    "scanDate": "2026-03-04T18:12:05.053372",
-                    "summary": {
-                        "totalSessions": 317,
-                        "todayTokens": 42253031,
-                        "todayCost": 21.13,
-                        "weekToDate": 106658224,
-                        "weekToDateCost": 53.33,
-                        "monthToDate": 128820649,
-                        "monthToDateCost": 64.41,
-                        "yearToDate": 128820649,
-                        "yearToDateCost": 64.41,
-                        "averageDaily": 21272464,
-                        "averageDailyCost": 10.64,
-                        "projectedMonthlyCost": 319.20,
-                        "projectedYearlyCost": 3882.40
-                    },
-                    "dailyBreakdown": {
-                        "2026-03-04": 42253031,
-                        "2026-03-03": 28458038,
-                        "2026-03-02": 15805776,
-                        "2026-03-01": 19712716
-                    },
-                    "modelBreakdown": [
-                        {"name": "moonshotai/kimi-k2.5", "tokens": 80074275, "costPer1K": 0.0005, "estimatedCost": 40.04},
-                        {"name": "anthropic/claude-sonnet-4.5", "tokens": 17027890, "costPer1K": 0.0009, "estimatedCost": 15.33},
-                        {"name": "glm-4.7", "tokens": 20194038, "costPer1K": 0.0001, "estimatedCost": 2.02},
-                        {"name": "moonshotai/kimi-k2-thinking", "tokens": 6871233, "costPer1K": 0.002, "estimatedCost": 13.74}
-                    ],
-                    "todayUsage": 42253031,
-                    "wtdUsage": 106658224,
-                    "mtdUsage": 128820649,
-                    "ytdUsage": 128820649,
-                    "avgUsage": 21272464,
-                    "mtdCost": 64.41,
-                    "ytdCost": 64.41
-                });
-            }
+        function initDashboard() {
+            var data = {
+                "summary": {
+                    "totalSessions": 317,
+                    "todayCost": 21.13,
+                    "weekToDateCost": 53.33,
+                    "monthToDateCost": 64.41,
+                    "yearToDateCost": 64.41,
+                    "averageDailyCost": 10.64,
+                    "projectedMonthlyCost": 319.20,
+                    "projectedYearlyCost": 3882.40
+                },
+                "modelBreakdown": [
+                    {"name": "moonshotai/kimi-k2.5", "tokens": 80074275, "sessions": 200, "costPer1K": 0.0005, "estimatedCost": 40.04},
+                    {"name": "anthropic/claude-sonnet-4.5", "tokens": 17027890, "sessions": 45, "costPer1K": 0.0009, "estimatedCost": 15.33},
+                    {"name": "glm-4.7", "tokens": 20194038, "sessions": 50, "costPer1K": 0.0001, "estimatedCost": 2.02},
+                    {"name": "moonshotai/kimi-k2-thinking", "tokens": 6871233, "sessions": 22, "costPer1K": 0.002, "estimatedCost": 13.74}
+                ],
+                "todayUsage": 42253031,
+                "wtdUsage": 106658224,
+                "mtdUsage": 128820649,
+                "ytdUsage": 128820649,
+                "avgUsage": 21272464,
+                "mtdCost": 64.41,
+                "ytdCost": 64.41,
+                "files": [],
+                "largeFiles": [],
+                "duplicates": [],
+                "oldFiles": [],
+                "contextTokens": 45000
+            };
+            populateDashboard(data);
         }
         
-        // Start loading immediately
         initDashboard();
     </script>
 </body>
