@@ -1,72 +1,96 @@
 {
-  "scanDate": "2026-03-04T18:12:05.053372",
+  "scanDate": "2026-03-08T23:15:00.352Z",
   "summary": {
-    "totalSessions": 317,
-    "todayTokens": 42253031,
-    "todayCost": 21.13,
-    "weekToDate": 106658224,
-    "weekToDateCost": 53.33,
-    "monthToDate": 128820649,
-    "monthToDateCost": 64.41,
-    "yearToDate": 128820649,
-    "yearToDateCost": 64.41,
-    "averageDaily": 21272464,
-    "averageDailyCost": 10.64,
-    "projectedMonthlyCost": 319.20,
-    "projectedYearlyCost": 3882.40
+    "totalSessions": 327,
+    "todayTokens": 7976845,
+    "todayCost": 3.99,
+    "weekToDate": 7976845,
+    "weekToDateCost": 3.99,
+    "monthToDate": 10287105,
+    "monthToDateCost": 5.14,
+    "yearToDate": 10287105,
+    "yearToDateCost": 5.14,
+    "averageDaily": 1285888,
+    "averageDailyCost": 0.64,
+    "projectedMonthlyCost": 19.29,
+    "projectedYearlyCost": 231.46
   },
   "dailyBreakdown": {
-    "2026-03-04": 42253031,
-    "2026-03-03": 28458038,
-    "2026-03-02": 15805776,
-    "2026-03-01": 19712716,
-    "2026-02-27": 132763,
-    "2026-02-26": 295900,
+    "2026-03-08": 7976845,
+    "2026-02-26": 0,
+    "2026-02-07": 934829,
     "2026-02-25": 0,
-    "2026-02-07": 22162425
+    "2026-03-03": 56758,
+    "2026-03-07": 317152,
+    "2026-03-01": 0,
+    "2026-03-04": 197630,
+    "2026-03-05": 1531312,
+    "2026-03-06": 110074,
+    "2026-03-02": 97334
   },
   "modelBreakdown": [
     {
       "name": "moonshotai/kimi-k2.5",
-      "tokens": 80074275,
+      "tokens": 5477852,
       "sessions": 0,
-      "costPer1K": 0.0005,
-      "estimatedCost": 40.04
+      "costPer1K": 0.5,
+      "estimatedCost": 2.74
     },
     {
-      "name": "glm-4.7",
-      "tokens": 20194038,
+      "name": "minimax/minimax-m2.5",
+      "tokens": 4588622,
       "sessions": 0,
-      "costPer1K": 0.0001,
-      "estimatedCost": 2.02
+      "costPer1K": 0.5,
+      "estimatedCost": 2.29
+    },
+    {
+      "name": "delivery-mirror",
+      "tokens": 0,
+      "sessions": 0,
+      "costPer1K": 0.5,
+      "estimatedCost": 0
     },
     {
       "name": "anthropic/claude-sonnet-4.5",
-      "tokens": 17027890,
+      "tokens": 153956,
       "sessions": 0,
-      "costPer1K": 0.0009,
-      "estimatedCost": 15.33
+      "costPer1K": 0.5,
+      "estimatedCost": 0.08
     },
     {
-      "name": "moonshotai/kimi-k2-thinking",
-      "tokens": 6871233,
+      "name": "google/gemini-3-flash-preview",
+      "tokens": 81480,
       "sessions": 0,
-      "costPer1K": 0.002,
-      "estimatedCost": 13.74
+      "costPer1K": 0.5,
+      "estimatedCost": 0.04
     },
     {
-      "name": "unknown",
-      "tokens": 4653213,
+      "name": "openai/gpt-5.4-pro",
+      "tokens": 875236,
       "sessions": 0,
-      "costPer1K": 0.0005,
-      "estimatedCost": 2.33
+      "costPer1K": 0.5,
+      "estimatedCost": 0.44
+    },
+    {
+      "name": "glm-4.7",
+      "tokens": 44788,
+      "sessions": 0,
+      "costPer1K": 0.5,
+      "estimatedCost": 0.02
+    },
+    {
+      "name": "mistral:7b",
+      "tokens": 0,
+      "sessions": 0,
+      "costPer1K": 0.5,
+      "estimatedCost": 0
+    },
+    {
+      "name": "qwen3:8b",
+      "tokens": 0,
+      "sessions": 0,
+      "costPer1K": 0.5,
+      "estimatedCost": 0
     }
-  ],
-  "todayUsage": 42253031,
-  "wtdUsage": 106658224,
-  "mtdUsage": 128820649,
-  "ytdUsage": 128820649,
-  "avgUsage": 21272464,
-  "mtdCost": 64.41,
-  "ytdCost": 64.41
+  ]
 }
